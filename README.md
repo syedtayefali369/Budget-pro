@@ -40,4 +40,4 @@ A simple, responsive web application for tracking personal expenses and income w
    - Check the dashboard for totals
    - View the chart for expense breakdown by category
 
-## File Structure
+
