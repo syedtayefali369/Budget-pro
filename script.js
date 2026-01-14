@@ -410,3 +410,97 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+// Add to script.js after export button
+const reportBtn = document.createElement('button');
+reportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate Monthly Report';
+reportBtn.className = 'btn-file';
+reportBtn.onclick = generateMonthlyReport;
+
+// Add this function
+function generateMonthlyReport() {
+    const month = prompt("Enter month and year (e.g., January 2024):", 
+        new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
+    
+    if (!month) return;
+    
+    const monthlyTransactions = transactions.filter(t => {
+        const transDate = new Date(t.date);
+        const transMonth = transDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        return transMonth === month;
+    });
+    
+    if (monthlyTransactions.length === 0) {
+        alert(`No transactions found for ${month}`);
+        return;
+    }
+    
+    // Calculate totals
+    const income = monthlyTransactions.filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+    const expenses = monthlyTransactions.filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+    
+    // Create report content
+    let report = `Monthly Expense Report - ${month}\n`;
+    report += '='.repeat(50) + '\n\n';
+    report += `Total Income: $${income.toFixed(2)}\n`;
+    report += `Total Expenses: $${expenses.toFixed(2)}\n`;
+    report += `Net Savings: $${(income - expenses).toFixed(2)}\n\n`;
+    report += 'TRANSACTION DETAILS:\n';
+    report += '-'.repeat(50) + '\n';
+    
+    monthlyTransactions.forEach((t, i) => {
+        report += `${i+1}. ${t.date} - ${t.title}\n`;
+        report += `   Type: ${t.type} | Category: ${formatCategory(t.category)}\n`;
+        report += `   Amount: $${t.amount.toFixed(2)}\n`;
+        if (t.description) report += `   Notes: ${t.description}\n`;
+        report += '\n';
+    });
+    
+    // Download as text file
+    const blob = new Blob([report], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Expense_Report_${month.replace(' ', '_')}.txt`;
+    a.click();
+    
+    showNotification(`Report for ${month} generated!`, 'success');
+}
+// Add to updateDashboard() function
+function showQuickStats() {
+    const today = new Date().toISOString().split('T')[0];
+    const todayExpenses = transactions
+        .filter(t => t.date === today && t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+    
+    const monthlyExpenses = transactions
+        .filter(t => {
+            const transDate = new Date(t.date);
+            const now = new Date();
+            return transDate.getMonth() === now.getMonth() && 
+                   transDate.getFullYear() === now.getFullYear() &&
+                   t.type === 'expense';
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+    
+    // Create or update stats display
+    let statsDiv = document.getElementById('quickStats');
+    if (!statsDiv) {
+        statsDiv = document.createElement('div');
+        statsDiv.id = 'quickStats';
+        statsDiv.className = 'quick-stats';
+        document.querySelector('.dashboard').appendChild(statsDiv);
+    }
+    
+    statsDiv.innerHTML = `
+        <div class="stat-item">
+            <small>Today's Spending</small>
+            <strong>$${todayExpenses.toFixed(2)}</strong>
+        </div>
+        <div class="stat-item">
+            <small>This Month</small>
+            <strong>$${monthlyExpenses.toFixed(2)}</strong>
+        </div>
+    `;
+}
