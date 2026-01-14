@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-wallet"></i> Expense Tracker</h1>
+            <p class="subtitle">Track and manage your expenses easily</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="summary-card">
+                <h3><i class="fas fa-chart-pie"></i> Total Balance</h3>
+                <p class="balance" id="totalBalance">$0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3><i class="fas fa-arrow-up"></i> Total Income</h3>
+                <p class="income" id="totalIncome">$0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3><i class="fas fa-arrow-down"></i> Total Expenses</h3>
+                <p class="expense" id="totalExpense">$0.00</p>
+            </div>
+        </div>
+
+        <main class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-plus-circle"></i> Add New Expense/Income</h2>
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="title"><i class="fas fa-tag"></i> Title</label>
+                        <input type="text" id="title" placeholder="Enter title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="amount"><i class="fas fa-money-bill-wave"></i> Amount ($)</label>
+                        <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type"><i class="fas fa-exchange-alt"></i> Type</label>
+                        <select id="type" required>
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category"><i class="fas fa-filter"></i> Category</label>
+                        <select id="category" required>
+                            <option value="food">Food & Dining</option>
+                            <option value="transport">Transportation</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="bills">Bills & Utilities</option>
+                            <option value="health">Health & Medical</option>
+                            <option value="education">Education</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date"><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description"><i class="fas fa-file-alt"></i> Description (Optional)</label>
+                        <textarea id="description" placeholder="Add notes..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i> Add Transaction
+                    </button>
+                </form>
+            </div>
+
+            <div class="transactions-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Transaction History</h2>
+                    <div class="file-controls">
+                        <button id="exportBtn" class="btn-file">
+                            <i class="fas fa-download"></i> Export to File
+                        </button>
+                        <button id="importBtn" class="btn-file">
+                            <i class="fas fa-upload"></i> Import from File
+                        </button>
+                        <input type="file" id="fileInput" accept=".json" style="display: none;">
+                    </div>
+                </div>
+                
+                <div class="filters">
+                    <select id="filterType">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Income Only</option>
+                        <option value="expense">Expenses Only</option>
+                    </select>
+                    
+                    <select id="filterCategory">
+                        <option value="all">All Categories</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="transport">Transportation</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="health">Health & Medical</option>
+                        <option value="education">Education</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <button id="clearFilters" class="btn-clear">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                
+                <div class="transactions-list" id="transactionsList">
+                    <!-- Transactions will be added here dynamically -->
+                    <p class="empty-state">No transactions yet. Add your first expense or income!</p>
+                </div>
+            </div>
+        </main>
+
+        <div class="chart-section">
+            <h2><i class="fas fa-chart-bar"></i> Expense by Category</h2>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
